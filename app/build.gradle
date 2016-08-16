@@ -1,0 +1,63 @@
+apply plugin: 'com.android.application'
+apply from: '../dependency.gradle'
+
+android {
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
+
+    defaultConfig {
+        applicationId rootProject.ext.applicationId
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        versionCode rootProject.ext.versionCode
+        versionName rootProject.ext.versionName
+        multiDexEnabled true
+    }
+
+    buildTypes {
+        release {
+            // 混淆
+            minifyEnabled false
+            // 优化
+            zipAlignEnabled true
+            // 移除无用的resource文件
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility rootProject.ext.javaVersion
+        targetCompatibility rootProject.ext.javaVersion
+    }
+
+    packagingOptions {
+        exclude 'LICENSE.txt'
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/ASL2.0'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/LICENSE'
+    }
+
+    lintOptions {
+        abortOnError rootProject.ext.abortOnLintError
+        checkReleaseBuilds rootProject.ext.checkLintRelease
+        quiet true
+        ignoreWarnings true
+        // Some libraries have issues with this.
+        disable 'InvalidPackage'
+        // Lint gives this warning but SDK 20 would be Android L Beta.
+        disable 'OldTargetApi'
+    }
+
+    dataBinding {
+        enabled = true
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile rootProject.ext.libTestCompile
+    compile rootProject.ext.libSupportAppcompatV7
+    compile rootProject.ext.libSupportMultidex
+}
